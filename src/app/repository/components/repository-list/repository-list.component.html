@@ -1,0 +1,15 @@
+<div
+  class="w-full h-full mx-auto py-8 grid justify-center items-center content-center place-items-center place-content-center justify-items-center"
+>
+  <h1 class="text-3xl my-8">James's Repositories</h1>
+
+  <div *ngIf="isLoading$ | async">Loading...</div>
+
+  <div *ngIf="error$ | async as error">{{ error }}</div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 overflow-y-auto">
+    <div *ngFor="let repository of repositories$ | async">
+      <repository-item [repository]="repository" [starredRepositories]="starredRepositories$ | async" [subscribedRepositories]="subscribedRepositories$ | async" ></repository-item>
+    </div>
+  </div>
+</div>
