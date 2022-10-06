@@ -1,0 +1,42 @@
+<div class="bg-gray-600 p-4 hover:bg-white hover:text-black duration-200 grid grid-cols-1 gap-y-3 rounded-lg">
+  <div class="">
+    <!-- href="repository/{{ repository.owner.login }} /{{ repository.name }}" -->
+    <a
+      [routerLink]="['/repository', repository.owner.login, repository.name]"
+      class="text-lg font-bold hover:text-indigo-400 hover:underline underline-offset-2 duration-200"
+    >
+      {{ repository.name }} ({{
+        repository.private ? "Private" : "Public"
+      }})
+    </a>
+  </div>
+  <div class="flex items-center gap-x-2">
+    <img
+      src="{{ repository.owner.avatar_url }}"
+      alt=""
+      srcset=""
+      class="rounded-full w-8"
+    />
+    {{ repository.owner.login }}
+  </div>
+  <div class="grid grid-cols-2 gap-x-2">
+    <button
+      (click)="star(repository.owner.login, repository.name)"
+      class="font-semibold bg-slate-700 px-4 py-2 rounded-lg hover:bg-slate-300 duration-200 text-white hover:text-black"
+    >
+      {{ isStarred ? "Starred" : "Star"}} ({{ repository.stargazers_count }})
+    </button>
+    <button
+      (click)="subscribe(repository.owner.login, repository.name)"
+      class="font-semibold bg-slate-700 px-4 py-2 rounded-lg hover:bg-slate-300 duration-200 text-white hover:text-black"
+    >
+      {{ isSubscribed ? "Subscribed" : "Subscribe"}}
+    </button>
+  </div>
+  <div class="p-4 bg-slate-800 rounded-lg text-white">
+    <div class="text-center">{{ repository.open_issues_count === 0 ? "No Issues" : repository.open_issues_count + " Issues"}}</div>
+    <div *ngFor="let issue of repository.issues | async">
+      {{ issue }}
+    </div>
+  </div>
+</div>
