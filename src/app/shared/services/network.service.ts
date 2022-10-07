@@ -13,24 +13,25 @@ export class NetworkService {
   };
   constructor(protected http: HttpClient) {}
 
-  getRequest(url: string, options: object) {
+  getRequest(url: string, options?: object) {
     return this.http.get<any>(url, {
       ...this.options,
-      ...options,
+      ...(options || {}),
     });
   }
 
-  putRequest(url: string, body: object, options: object) {
+  putRequest(url: string, body?: object, options?: object) {
     return this.http.put<any>(url, body, {
       ...this.options,
-      ...options,
+      ...(body || {}),
+      ...(options || {}),
     });
   }
 
-  deleteRequest(url: string, options: object) {
+  deleteRequest(url: string, options?: object) {
     return this.http.delete<any>(url, {
       ...this.options,
-      ...options,
+      ...(options || {}),
     });
   }
 }

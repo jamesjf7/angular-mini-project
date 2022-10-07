@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import * as REPOSITORIES from '../../shared/store/reducers';
-import { AppState } from 'src/app/shared/types/appState.interface';
+import { AppState } from 'src/app/shared/types/appState.model';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 

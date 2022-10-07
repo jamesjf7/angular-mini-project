@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { select, Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
-import { AppStateInterface } from 'src/app/shared/types/appState.interface';
+import { AppState } from 'src/app/shared/types/appState.model';
 import * as REPOSITORY from '../../shared/store/reducers';
 import { Repository } from '../../shared/types/repository.model';
 
@@ -14,7 +14,7 @@ export class RepositoryListComponent implements OnInit {
   error$: Observable<string | null>;
   repositories$: Observable<any[]>;
 
-  constructor(private store: Store<AppStateInterface>) {
+  constructor(private store: Store<AppState>) {
     this.isLoading$ = this.store.pipe(select(REPOSITORY.isLoadingSelector));
     this.error$ = this.store.pipe(select(REPOSITORY.errorSelector));
     this.repositories$ = this.store.pipe(

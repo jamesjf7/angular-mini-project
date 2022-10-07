@@ -1,7 +1,7 @@
 import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { Store } from '@ngrx/store';
 import * as REPOSITORY from '../../shared/store/reducers';
-import { AppState } from 'src/app/shared/types/appState.interface';
+import { AppState } from 'src/app/shared/types/appState.model';
 
 @Component({
   selector: 'repository-item',

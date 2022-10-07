@@ -1,3 +1,7 @@
+<div *ngIf="isLoading$ | async">
+  <div class="bg-slate-600 bg-opacity-80 absolute w-screen h-screen grid content-center items-center justify-center duration-200 animate-pulse">Loading....</div>
+</div>
+
 <div class="mx-auto w-fit py-8">
   <div *ngFor="let issue of issues$ | async">
     <div class="py-4">

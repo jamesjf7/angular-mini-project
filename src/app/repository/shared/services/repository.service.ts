@@ -4,80 +4,50 @@ import { Observable } from 'rxjs';
 import { NetworkService } from 'src/app/shared/services/network.service';
 import { environment } from 'src/environments/environment';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class RepositoryService extends NetworkService {
+  baseUrl = 'https://api.github.com';
   constructor(http: HttpClient) {
     super(http);
   }
 
   getRepositories(): Observable<any> {
-    const url = 'https://api.github.com/user/repos';
-    return this.getRequest(url, {
-      headers: {
-        Authorization: 'Bearer ' + this.access_token,
-      },
-    });
+    return this.getRequest(`${this.baseUrl}/user/repos`);
   }
 
   getStarredRepositories(): Observable<any> {
-    return this.getRequest('https://api.github.com/user/starred', {
-      headers: {
-        Authorization: 'Bearer ' + this.access_token,
-      },
-    });
+    return this.getRequest(`${this.baseUrl}/user/starred`);
   }
 
   getSubscribedRepositories(): Observable<any> {
-    return this.getRequest('https://api.github.com/user/subscriptions', {
-      headers: {
-        Authorization: 'Bearer ' + this.access_token,
-      },
-    });
+    return this.getRequest(`${this.baseUrl}/user/subscriptions`);
   }
 
   getIssues(owner: string, repository_name: string): Observable<any> {
-    const url = `https://api.github.com/repos/${owner}/${repository_name}/issues`;
-    return this.getRequest(url, {
-      headers: {
-        Authorization: 'Bearer ' + this.access_token,
-      },
-    });
+    return this.getRequest(
+      `${this.baseUrl}/repos/${owner}/${repository_name}/issues`
+    );
   }
 
   starRepository(owner: string, repository_name: string): Observable<any> {
-    const url = `https://api.github.com/user/starred/${owner}/${repository_name}`;
     return this.putRequest(
-      url,
-      {},
-      {
-        headers: {
-          Authorization: 'Bearer ' + this.access_token,
-        },
-      }
+      `${this.baseUrl}/user/starred/${owner}/${repository_name}`
     );
   }
 
   unstarRepository(owner: string, repository_name: string): Observable<any> {
     const url = `https://api.github.com/user/starred/${owner}/${repository_name}`;
-    return this.deleteRequest(url, {
-      headers: {
-        Authorization: 'Bearer ' + this.access_token,
-      },
-    });
+    return this.deleteRequest(
+      `${this.baseUrl}/user/starred/${owner}/${repository_name}`
+    );
   }
 
   subscribeRepository(owner: string, repository_name: string): Observable<any> {
-    const url = `https://api.github.com/repos/${owner}/${repository_name}/subscription`;
     return this.putRequest(
-      url,
+      `${this.baseUrl}/repos/${owner}/${repository_name}/subscription`,
       {
         ignored: false,
         subscribed: true,
-      },
-      {
-        headers: {
-          Authorization: 'Bearer ' + this.access_token,
-        },
       }
     );
   }
@@ -86,11 +56,8 @@ export class RepositoryService extends NetworkService {
     owner: string,
     repository_name: string
   ): Observable<any> {
-    const url = `https://api.github.com/repos/${owner}/${repository_name}/subscription`;
-    return this.deleteRequest(url, {
-      headers: {
-        Authorization: 'Bearer ' + this.access_token,
-      },
-    });
+    return this.deleteRequest(
+      `${this.baseUrl}/repos/${owner}/${repository_name}/subscription`
+    );
   }
 }

@@ -7,7 +7,7 @@ import {
   props,
 } from '@ngrx/store';
 
-import { AppStateInterface } from 'src/app/shared/types/appState.interface';
+import { AppState } from 'src/app/shared/types/appState.model';
 import { Repository } from '../types/repository.model';
 
 const FEATURE_NAME = '[REPOSITORY]';
@@ -170,7 +170,7 @@ export const reducers = createReducer(
 );
 
 // SELECTOR
-export const selectFeature = (state: AppStateInterface) => state.repositories;
+export const selectFeature = (state: AppState) => state.repositories;
 
 export const isLoadingSelector = createSelector(
   selectFeature,
