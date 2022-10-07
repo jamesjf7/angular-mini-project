@@ -1,7 +1,7 @@
 import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { Store } from '@ngrx/store';
 import * as REPOSITORY from '../../shared/store/reducers';
-import { AppStateInterface } from 'src/app/types/appState.interface';
+import { AppState } from 'src/app/shared/types/appState.interface';
 
 @Component({
   selector: 'repository-item',
@@ -12,7 +12,7 @@ export class RepositoryItemComponent implements OnInit {
   @Output() onStarred: EventEmitter<any> = new EventEmitter();
   @Output() onSubscribed: EventEmitter<any> = new EventEmitter();
 
-  constructor(private store: Store<AppStateInterface>) {}
+  constructor(private store: Store<AppState>) {}
 
   ngOnInit() {}
 

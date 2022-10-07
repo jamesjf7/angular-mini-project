@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { select, Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
-import { AppStateInterface } from 'src/app/types/appState.interface';
+import { AppStateInterface } from 'src/app/shared/types/appState.interface';
 import * as REPOSITORY from '../../shared/store/reducers';
 import { Repository } from '../../shared/types/repository.model';
 

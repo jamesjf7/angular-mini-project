@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import * as REPOSITORIES from '../../shared/store/reducers';
-import { AppStateInterface } from 'src/app/types/appState.interface';
+import { AppState } from 'src/app/shared/types/appState.interface';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 
@@ -15,7 +15,7 @@ export class RepositoryDetailPageComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private store: Store<AppStateInterface>
+    private store: Store<AppState>
   ) {
     this.issues$ = this.store.select(REPOSITORIES.issuesSelector);
     this.isLoading$ = this.store.select(REPOSITORIES.isLoadingSelector);

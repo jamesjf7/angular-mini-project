@@ -7,7 +7,7 @@ import {
   props,
 } from '@ngrx/store';
 
-import { AppStateInterface } from 'src/app/types/appState.interface';
+import { AppStateInterface } from 'src/app/shared/types/appState.interface';
 import { Repository } from '../types/repository.model';
 
 const FEATURE_NAME = '[REPOSITORY]';
