@@ -1,6 +1,15 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { catchError, map, mergeMap, of, from } from 'rxjs';
+import {
+  catchError,
+  map,
+  mergeMap,
+  of,
+  from,
+  switchMap,
+  forkJoin,
+  tap,
+} from 'rxjs';
 import { RepositoryService } from '../../services/repository.service';
 import * as RepositoriesActions from './actions';
 
@@ -13,7 +22,7 @@ export class RepositoriesEffects {
   getRepositories$ = createEffect(() =>
     this.actions$.pipe(
       ofType(RepositoriesActions.getRepositories),
-      mergeMap(() => {
+      switchMap(() => {
         return this.repositoryService.getRepositories().pipe(
           map((repositories) =>
             RepositoriesActions.getRepositoriesSuccess({ repositories })
@@ -26,9 +35,28 @@ export class RepositoriesEffects {
             )
           )
         );
+      }),
+      mergeMap((repositories) => {
+        return of(
+          repositories,
+          RepositoriesActions.getStarredRepositories(),
+          RepositoriesActions.getSubscribedRepositories()
+        );
       })
     )
   );
+
+  // getRepositoriesSuccess$ = createEffect(() =>
+  //   this.actions$.pipe(
+  //     ofType(RepositoriesActions.getRepositoriesSuccess),
+  //     tap(() => {
+  //       from([
+  //         RepositoriesActions.getStarredRepositories(),
+  //         RepositoriesActions.getSubscribedRepositories(),
+  //       ]);
+  //     })
+  //   )
+  // );
 
   getStarredRepositories$ = createEffect(() =>
     this.actions$.pipe(

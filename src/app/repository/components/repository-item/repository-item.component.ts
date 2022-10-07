@@ -3,39 +3,21 @@ import { Store } from '@ngrx/store';
 import * as RepositoriesActions from '../../store/actions';
 import { AppStateInterface } from 'src/app/types/appState.interface';
 import { RepositoryInterface } from '../../types/repository.interface';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'repository-item',
-  templateUrl: 'repository.component.html',
+  templateUrl: 'repository-item.component.html',
 })
-export class RepositoryComponent implements OnInit {
+export class RepositoryItemComponent implements OnInit {
   @Input() repository: any;
-  @Input() starredRepositories: any;
-  @Input() subscribedRepositories: any;
-
-  isStarred: boolean = false;
-  isSubscribed: boolean = false;
 
   constructor(private store: Store<AppStateInterface>) {}
 
-  ngOnInit() {
-    this.isStarred =
-      this.starredRepositories.filter(
-        (repo: any) => repo.name === this.repository.name
-      ).length > 0;
-    this.isSubscribed =
-      this.subscribedRepositories.filter(
-        (repo: any) => repo.name === this.repository.name
-      ).length > 0;
-  }
+  ngOnInit() {}
 
   subscribe(owner: string, repository_name: string) {
-    const isSubscribed =
-      this.subscribedRepositories.filter(
-        (repo: any) => repo.name === repository_name
-      ).length > 0;
-    this.isSubscribed = !isSubscribed;
-    if (isSubscribed) {
+    if (this.repository.is_subscribed) {
       this.store.dispatch(
         RepositoriesActions.unsubscribeRepository({
           owner,
@@ -53,12 +35,7 @@ export class RepositoryComponent implements OnInit {
   }
 
   star(owner: string, repository_name: string) {
-    const isStarred =
-      this.starredRepositories.filter(
-        (repo: any) => repo.name === repository_name
-      ).length > 0;
-    this.isStarred = !isStarred;
-    if (isStarred) {
+    if (this.repository.is_starred) {
       this.store.dispatch(
         RepositoriesActions.unstarRepository({ owner, repository_name })
       );

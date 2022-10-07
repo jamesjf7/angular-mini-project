@@ -13,7 +13,9 @@ export class RepositoryService {
   constructor(private http: HttpClient) {}
 
   getRequest(url: string, options: object) {
-    return this.http.get<any>(url, { ...options });
+    return this.http.get<any>(url, {
+      ...options,
+    });
   }
 
   putRequest(url: string, body: object, options: object) {
@@ -29,6 +31,10 @@ export class RepositoryService {
     return this.getRequest(url, {
       headers: {
         Authorization: 'Bearer ' + this.access_token,
+        // 'Cache-Control':
+        //   'no-cache, no-store, must-revalidate, post-check=0, pre-check=0',
+        // Pragma: 'no-cache',
+        // Expires: '0',
       },
     });
   }

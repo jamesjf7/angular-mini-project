@@ -3,6 +3,7 @@ import { createReducer, on, Store } from '@ngrx/store';
 import { RepositoriesStateInterface } from '../types/repositoriesState.interface';
 import * as RepositoriesActions from './actions';
 import { state } from '@angular/animations';
+import { repositoriesSelector } from './selectors';
 
 export const initialState: RepositoriesStateInterface = {
   isLoading: false,
@@ -36,11 +37,21 @@ export const reducers = createReducer(
     ...state,
     isLoading: true,
   })),
-  on(RepositoriesActions.getStarredRepositoriesSuccess, (state, action) => ({
-    ...state,
-    isLoading: false,
-    starredRepositories: action.starredRepositories,
-  })),
+  on(RepositoriesActions.getStarredRepositoriesSuccess, (state, action) => {
+    return {
+      ...state,
+      isLoading: false,
+      repositories: state.repositories.map((repository) => {
+        const is_starred =
+          action.starredRepositories.filter((repo) => repo.id === repository.id)
+            .length > 0;
+        return {
+          ...repository,
+          is_starred,
+        };
+      }),
+    };
+  }),
   on(RepositoriesActions.getStarredRepositoriesFailure, (state, action) => ({
     ...state,
     isLoading: false,
@@ -52,11 +63,22 @@ export const reducers = createReducer(
     ...state,
     isLoading: true,
   })),
-  on(RepositoriesActions.getSubscribedRepositoriesSuccess, (state, action) => ({
-    ...state,
-    isLoading: false,
-    subscribedRepositories: action.subscribedRepositories,
-  })),
+  on(RepositoriesActions.getSubscribedRepositoriesSuccess, (state, action) => {
+    return {
+      ...state,
+      isLoading: false,
+      repositories: state.repositories.map((repository) => {
+        const is_subscribed =
+          action.subscribedRepositories.filter(
+            (repo) => repo.id === repository.id
+          ).length > 0;
+        return {
+          ...repository,
+          is_subscribed,
+        };
+      }),
+    };
+  }),
   on(RepositoriesActions.getSubscribedRepositoriesFailure, (state, action) => ({
     ...state,
     isLoading: false,
@@ -86,29 +108,11 @@ export const reducers = createReducer(
   on(RepositoriesActions.starRepository, (state, action) => {
     return {
       ...state,
-      repositories: state.repositories.map((repo) => {
-        return {
-          ...repo,
-          stargazers_count:
-            repo.name === action.repository_name
-              ? repo.stargazers_count + 1
-              : repo.stargazers_count,
-        };
-      }),
     };
   }),
   on(RepositoriesActions.unstarRepository, (state, action) => {
     return {
       ...state,
-      repositories: state.repositories.map((repo) => {
-        return {
-          ...repo,
-          stargazers_count:
-            repo.name === action.repository_name
-              ? repo.stargazers_count - 1
-              : repo.stargazers_count,
-        };
-      }),
     };
   }),
 

@@ -37,7 +37,5 @@ export class RepositoryListComponent implements OnInit {
 
   ngOnInit(): void {
     this.store.dispatch(RepositoriesActions.getRepositories());
-    this.store.dispatch(RepositoriesActions.getStarredRepositories());
-    this.store.dispatch(RepositoriesActions.getSubscribedRepositories());
   }
 }
