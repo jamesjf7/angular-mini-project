@@ -21,16 +21,16 @@
   </div>
   <div class="grid grid-cols-2 gap-x-2">
     <button
-      (click)="star(repository.owner.login, repository.name)"
+      (click)="handleOnStarred()"
       class="font-semibold bg-slate-700 px-4 py-2 rounded-lg hover:bg-slate-300 duration-200 text-white hover:text-black"
     >
-      {{ repository.is_starred ? "Starred" : "Star"}} ({{ repository.stargazers_count }})
+      {{ repository.isStarred ? "Starred" : "Star"}} ({{ repository.stargazers_count }})
     </button>
     <button
-      (click)="subscribe(repository.owner.login, repository.name)"
+      (click)="handleOnSubscribed()"
       class="font-semibold bg-slate-700 px-4 py-2 rounded-lg hover:bg-slate-300 duration-200 text-white hover:text-black"
     >
-      {{ repository.is_subscribed ? "Subscribed" : "Subscribe"}}
+      {{ repository.isSubscribed ? "Subscribed" : "Subscribe"}}
     </button>
   </div>
   <div class="p-4 bg-slate-800 rounded-lg text-white">

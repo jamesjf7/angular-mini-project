@@ -1,29 +1,13 @@
-import { subscribeRepository } from './../repository/store/actions';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { delay, mergeMap, Observable, of, forkJoin } from 'rxjs';
-import { switchMap, map, distinctUntilChanged } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { NetworkService } from 'src/app/shared/services/network.service';
 import { environment } from 'src/environments/environment';
-import { RepositoryInterface } from '../repository/types/repository.interface';
-import { repositoriesSelector } from '../repository/store/selectors';
 
-@Injectable({ providedIn: 'root' })
-export class RepositoryService {
-  access_token = environment.access_token;
-  constructor(private http: HttpClient) {}
-
-  getRequest(url: string, options: object) {
-    return this.http.get<any>(url, {
-      ...options,
-    });
-  }
-
-  putRequest(url: string, body: object, options: object) {
-    return this.http.put<any>(url, body, { ...options });
-  }
-
-  deleteRequest(url: string, options: object) {
-    return this.http.delete<any>(url, { ...options });
+@Injectable()
+export class RepositoryService extends NetworkService {
+  constructor(http: HttpClient) {
+    super(http);
   }
 
   getRepositories(): Observable<any> {
@@ -31,10 +15,6 @@ export class RepositoryService {
     return this.getRequest(url, {
       headers: {
         Authorization: 'Bearer ' + this.access_token,
-        // 'Cache-Control':
-        //   'no-cache, no-store, must-revalidate, post-check=0, pre-check=0',
-        // Pragma: 'no-cache',
-        // Expires: '0',
       },
     });
   }

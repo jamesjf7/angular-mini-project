@@ -3,11 +3,13 @@
 >
   <h1 class="text-3xl my-8">James's Repositories</h1>
 
+  <div *ngIf="isLoading$ | async">Loading...</div>
+
   <div *ngIf="error$ | async as error">{{ error }}</div>
 
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 overflow-y-auto">
     <div *ngFor="let repository of repositories$ | async as List">
-      <repository-item [repository]="repository" ></repository-item>
+      <repository-item [repository]="repository" (onStarred)="onStarred(repository)" (onSubscribed)="onSubscribed(repository)" ></repository-item>
     </div>
   </div>
 </div>

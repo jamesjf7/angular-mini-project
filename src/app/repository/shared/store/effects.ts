@@ -1,17 +1,26 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
+import { catchError, map, mergeMap, of, from, switchMap, forkJoin } from 'rxjs';
+import { RepositoryService } from '../services/repository.service';
+import { Repository } from '../types/repository.model';
 import {
-  catchError,
-  map,
-  mergeMap,
-  of,
-  from,
-  switchMap,
-  forkJoin,
-  tap,
-} from 'rxjs';
-import { RepositoryService } from '../../services/repository.service';
-import * as RepositoriesActions from './actions';
+  getRepositories,
+  getRepositoriesSuccess,
+  getRepositoriesFailure,
+  getStarredRepositories,
+  getSubscribedRepositories,
+  getStarredRepositoriesSuccess,
+  getStarredRepositoriesFailure,
+  getIssues,
+  getIssuesSuccess,
+  getIssuesFailure,
+  starRepository,
+  unstarRepository,
+  subscribeRepository,
+  unsubscribeRepository,
+  getSubscribedRepositoriesFailure,
+  getSubscribedRepositoriesSuccess,
+} from './reducers';
 
 @Injectable()
 export class RepositoriesEffects {
@@ -21,56 +30,58 @@ export class RepositoriesEffects {
   ) {}
   getRepositories$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(RepositoriesActions.getRepositories),
+      ofType(getRepositories),
       switchMap(() => {
-        return this.repositoryService.getRepositories().pipe(
-          map((repositories) =>
-            RepositoriesActions.getRepositoriesSuccess({ repositories })
-          ),
+        return forkJoin([
+          this.repositoryService.getRepositories(),
+          this.repositoryService.getStarredRepositories(),
+          this.repositoryService.getSubscribedRepositories(),
+        ]).pipe(
+          map(([repositories, starredRepositories, subscribedRepositories]) => {
+            repositories = repositories.map((repository: Repository) => {
+              return {
+                ...repository,
+                isStarred:
+                  starredRepositories.filter(
+                    (starredRepository: Repository) =>
+                      starredRepository.id === repository.id
+                  ).length > 0,
+                isSubscribed:
+                  subscribedRepositories.filter(
+                    (subscribedRepository: Repository) =>
+                      subscribedRepository.id === repository.id
+                  ).length > 0,
+              };
+            });
+            return getRepositoriesSuccess({
+              repositories: repositories,
+            });
+          }),
           catchError((error) =>
             of(
-              RepositoriesActions.getRepositoriesFailure({
+              getRepositoriesFailure({
                 error: error.message,
               })
             )
           )
         );
-      }),
-      mergeMap((repositories) => {
-        return of(
-          repositories,
-          RepositoriesActions.getStarredRepositories(),
-          RepositoriesActions.getSubscribedRepositories()
-        );
       })
     )
   );
 
-  // getRepositoriesSuccess$ = createEffect(() =>
-  //   this.actions$.pipe(
-  //     ofType(RepositoriesActions.getRepositoriesSuccess),
-  //     tap(() => {
-  //       from([
-  //         RepositoriesActions.getStarredRepositories(),
-  //         RepositoriesActions.getSubscribedRepositories(),
-  //       ]);
-  //     })
-  //   )
-  // );
-
   getStarredRepositories$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(RepositoriesActions.getStarredRepositories),
+      ofType(getStarredRepositories),
       mergeMap(() => {
         return this.repositoryService.getStarredRepositories().pipe(
           map((starredRepositories) =>
-            RepositoriesActions.getStarredRepositoriesSuccess({
+            getStarredRepositoriesSuccess({
               starredRepositories,
             })
           ),
           catchError((error) =>
             of(
-              RepositoriesActions.getStarredRepositoriesFailure({
+              getStarredRepositoriesFailure({
                 error: error.message,
               })
             )
@@ -82,17 +93,17 @@ export class RepositoriesEffects {
 
   getSubscribedRepositories$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(RepositoriesActions.getSubscribedRepositories),
+      ofType(getSubscribedRepositories),
       mergeMap(() => {
         return this.repositoryService.getSubscribedRepositories().pipe(
           map((subscribedRepositories) =>
-            RepositoriesActions.getSubscribedRepositoriesSuccess({
+            getSubscribedRepositoriesSuccess({
               subscribedRepositories,
             })
           ),
           catchError((error) =>
             of(
-              RepositoriesActions.getSubscribedRepositoriesFailure({
+              getSubscribedRepositoriesFailure({
                 error: error.message,
               })
             )
@@ -104,20 +115,20 @@ export class RepositoriesEffects {
 
   getIssues$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(RepositoriesActions.getIssues),
+      ofType(getIssues),
       mergeMap((action) => {
         return this.repositoryService
           .getIssues(action.owner, action.repository_name)
           .pipe(
             map(
               (issues) => {
-                return RepositoriesActions.getIssuesSuccess({
+                return getIssuesSuccess({
                   issues,
                 });
               },
               catchError((error) =>
                 of(
-                  RepositoriesActions.getIssuesFailure({
+                  getIssuesFailure({
                     error: error.message,
                   })
                 )
@@ -130,17 +141,12 @@ export class RepositoriesEffects {
 
   starRepository$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(RepositoriesActions.starRepository),
+      ofType(starRepository),
       mergeMap((action) => {
         return this.repositoryService
           .starRepository(action.owner, action.repository_name)
           .pipe(
-            mergeMap(() =>
-              from([
-                RepositoriesActions.getRepositories(),
-                RepositoriesActions.getStarredRepositories(),
-              ])
-            )
+            mergeMap(() => from([getRepositories(), getStarredRepositories()]))
           );
       })
     )
@@ -148,17 +154,12 @@ export class RepositoriesEffects {
 
   unstarRepository$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(RepositoriesActions.unstarRepository),
+      ofType(unstarRepository),
       mergeMap((action) => {
         return this.repositoryService
           .unstarRepository(action.owner, action.repository_name)
           .pipe(
-            mergeMap(() =>
-              from([
-                RepositoriesActions.getRepositories(),
-                RepositoriesActions.getStarredRepositories(),
-              ])
-            )
+            mergeMap(() => from([getRepositories(), getStarredRepositories()]))
           );
       })
     )
@@ -166,16 +167,13 @@ export class RepositoriesEffects {
 
   subscribeRepository$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(RepositoriesActions.subscribeRepository),
+      ofType(subscribeRepository),
       mergeMap((action) => {
         return this.repositoryService
           .subscribeRepository(action.owner, action.repository_name)
           .pipe(
             mergeMap(() =>
-              from([
-                RepositoriesActions.getRepositories(),
-                RepositoriesActions.getSubscribedRepositories(),
-              ])
+              from([getRepositories(), getSubscribedRepositories()])
             )
           );
       })
@@ -184,16 +182,13 @@ export class RepositoriesEffects {
 
   unsubscribeRepository$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(RepositoriesActions.unsubscribeRepository),
+      ofType(unsubscribeRepository),
       mergeMap((action) => {
         return this.repositoryService
           .unsubscribeRepository(action.owner, action.repository_name)
           .pipe(
             mergeMap(() =>
-              from([
-                RepositoriesActions.getRepositories(),
-                RepositoriesActions.getSubscribedRepositories(),
-              ])
+              from([getRepositories(), getSubscribedRepositories()])
             )
           );
       })

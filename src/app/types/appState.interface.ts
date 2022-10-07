@@ -1,5 +1,5 @@
-import { RepositoriesStateInterface } from '../repository/types/repositoriesState.interface';
+import { RepositoriesState } from '../repository/shared/types/repositoriesState.model';
 
-export interface AppStateInterface {
-  repositories: RepositoriesStateInterface;
+export class AppStateInterface {
+  repositories: RepositoriesState = {} as RepositoriesState;
 }
