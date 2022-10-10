@@ -27,22 +27,14 @@ export class RepositoryListComponent implements OnInit {
   }
 
   onSubscribed(repository: Repository) {
-    const data = {
-      owner: repository.owner.login,
-      repository_name: repository.name,
-    };
     if (repository.isSubscribed)
-      this.store.dispatch(REPOSITORY.unsubscribeRepository(data));
-    else this.store.dispatch(REPOSITORY.subscribeRepository(data));
+      this.store.dispatch(REPOSITORY.unsubscribeRepository({ repository }));
+    else this.store.dispatch(REPOSITORY.subscribeRepository({ repository }));
   }
 
   onStarred(repository: Repository) {
-    const data = {
-      owner: repository.owner.login,
-      repository_name: repository.name,
-    };
     if (repository.isStarred)
-      this.store.dispatch(REPOSITORY.unstarRepository(data));
-    else this.store.dispatch(REPOSITORY.starRepository(data));
+      this.store.dispatch(REPOSITORY.unstarRepository({ repository }));
+    else this.store.dispatch(REPOSITORY.starRepository({ repository }));
   }
 }

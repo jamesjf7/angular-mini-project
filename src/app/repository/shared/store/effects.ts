@@ -38,72 +38,26 @@ export class RepositoriesEffects {
           this.repositoryService.getSubscribedRepositories(),
         ]).pipe(
           map(([repositories, starredRepositories, subscribedRepositories]) => {
-            repositories = repositories.map((repository: Repository) => {
-              return {
-                ...repository,
-                isStarred:
-                  starredRepositories.filter(
-                    (starredRepository: Repository) =>
-                      starredRepository.id === repository.id
-                  ).length > 0,
-                isSubscribed:
-                  subscribedRepositories.filter(
-                    (subscribedRepository: Repository) =>
-                      subscribedRepository.id === repository.id
-                  ).length > 0,
-              };
-            });
             return getRepositoriesSuccess({
-              repositories: repositories,
+              repositories: repositories.map((repository: Repository) => {
+                return Object.assign(new Repository(), repository, {
+                  isStarred:
+                    starredRepositories.filter(
+                      (starredRepository: Repository) =>
+                        starredRepository.id === repository.id
+                    ).length > 0,
+                  isSubscribed:
+                    subscribedRepositories.filter(
+                      (subscribedRepository: Repository) =>
+                        subscribedRepository.id === repository.id
+                    ).length > 0,
+                });
+              }),
             });
           }),
           catchError((error) =>
             of(
               getRepositoriesFailure({
-                error: error.message,
-              })
-            )
-          )
-        );
-      })
-    )
-  );
-
-  getStarredRepositories$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType(getStarredRepositories),
-      mergeMap(() => {
-        return this.repositoryService.getStarredRepositories().pipe(
-          map((starredRepositories) =>
-            getStarredRepositoriesSuccess({
-              starredRepositories,
-            })
-          ),
-          catchError((error) =>
-            of(
-              getStarredRepositoriesFailure({
-                error: error.message,
-              })
-            )
-          )
-        );
-      })
-    )
-  );
-
-  getSubscribedRepositories$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType(getSubscribedRepositories),
-      mergeMap(() => {
-        return this.repositoryService.getSubscribedRepositories().pipe(
-          map((subscribedRepositories) =>
-            getSubscribedRepositoriesSuccess({
-              subscribedRepositories,
-            })
-          ),
-          catchError((error) =>
-            of(
-              getSubscribedRepositoriesFailure({
                 error: error.message,
               })
             )
@@ -144,10 +98,8 @@ export class RepositoriesEffects {
       ofType(starRepository),
       mergeMap((action) => {
         return this.repositoryService
-          .starRepository(action.owner, action.repository_name)
-          .pipe(
-            mergeMap(() => from([getRepositories(), getStarredRepositories()]))
-          );
+          .starRepository(action.repository)
+          .pipe(mergeMap(() => from([getRepositories()])));
       })
     )
   );
@@ -157,10 +109,8 @@ export class RepositoriesEffects {
       ofType(unstarRepository),
       mergeMap((action) => {
         return this.repositoryService
-          .unstarRepository(action.owner, action.repository_name)
-          .pipe(
-            mergeMap(() => from([getRepositories(), getStarredRepositories()]))
-          );
+          .unstarRepository(action.repository)
+          .pipe(mergeMap(() => from([getRepositories()])));
       })
     )
   );
@@ -170,12 +120,8 @@ export class RepositoriesEffects {
       ofType(subscribeRepository),
       mergeMap((action) => {
         return this.repositoryService
-          .subscribeRepository(action.owner, action.repository_name)
-          .pipe(
-            mergeMap(() =>
-              from([getRepositories(), getSubscribedRepositories()])
-            )
-          );
+          .subscribeRepository(action.repository)
+          .pipe(mergeMap(() => from([getRepositories()])));
       })
     )
   );
@@ -185,12 +131,8 @@ export class RepositoriesEffects {
       ofType(unsubscribeRepository),
       mergeMap((action) => {
         return this.repositoryService
-          .unsubscribeRepository(action.owner, action.repository_name)
-          .pipe(
-            mergeMap(() =>
-              from([getRepositories(), getSubscribedRepositories()])
-            )
-          );
+          .unsubscribeRepository(action.repository)
+          .pipe(mergeMap(() => from([getRepositories()])));
       })
     )
   );

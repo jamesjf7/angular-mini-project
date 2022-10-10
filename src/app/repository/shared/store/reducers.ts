@@ -39,7 +39,7 @@ export const getStarredRepositoriesFailure = createAction(
 
 // get subscribed repositories
 export const getSubscribedRepositories = createAction(
-  `${FEATURE_NAME} GET_SUBSCRIBED_REPOSITORIE`
+  `${FEATURE_NAME} GET_SUBSCRIBED_REPOSITORIES`
 );
 export const getSubscribedRepositoriesSuccess = createAction(
   `${FEATURE_NAME} GET_SUBSCRIBED_REPOSITORIES_SUCCESS`,
@@ -67,22 +67,22 @@ export const getIssuesFailure = createAction(
 // unsubscribe repository
 export const subscribeRepository = createAction(
   `${FEATURE_NAME} SUBSCRIBE_REPOSITORY`,
-  props<{ owner: string; repository_name: string }>()
+  props<{ repository: Repository }>()
 );
 export const unsubscribeRepository = createAction(
   `${FEATURE_NAME} UNSUBSCRIBE_REPOSITORY`,
-  props<{ owner: string; repository_name: string }>()
+  props<{ repository: Repository }>()
 );
 
 // start repository
 export const starRepository = createAction(
   `${FEATURE_NAME} STAR_REPOSITORY`,
-  props<{ owner: string; repository_name: string }>()
+  props<{ repository: Repository }>()
 );
 
 export const unstarRepository = createAction(
   `${FEATURE_NAME} UNSTAR_REPOSITORY`,
-  props<{ owner: string; repository_name: string }>()
+  props<{ repository: Repository }>()
 );
 
 // REDUCERS

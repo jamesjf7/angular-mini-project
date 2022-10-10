@@ -1,11 +1,15 @@
 export class Repository {
-  id = 0;
-  stargazers_count = 0;
-  name = '';
-  description = '';
-  isSubscribed = false;
-  isStarred = false;
-  owner = {
+  id: number = 0;
+  stargazersCount: number = 0;
+  name: string = '';
+  description: string = '';
+  isSubscribed: boolean = false;
+  isStarred: boolean = false;
+  owner: User = {
     login: '',
   };
+}
+
+export class User {
+  login: string = '';
 }

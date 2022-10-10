@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { NetworkService } from 'src/app/shared/services/network.service';
 import { environment } from 'src/environments/environment';
+import { Repository } from '../types/repository.model';
 
 @Injectable({ providedIn: 'root' })
 export class RepositoryService extends NetworkService {
@@ -29,22 +30,24 @@ export class RepositoryService extends NetworkService {
     );
   }
 
-  starRepository(owner: string, repository_name: string): Observable<any> {
+  starRepository(repository: Repository): Observable<any> {
+    const { owner, name } = repository;
     return this.putRequest(
-      `${this.baseUrl}/user/starred/${owner}/${repository_name}`
+      `${this.baseUrl}/user/starred/${owner.login}/${name}`
     );
   }
 
-  unstarRepository(owner: string, repository_name: string): Observable<any> {
-    const url = `https://api.github.com/user/starred/${owner}/${repository_name}`;
+  unstarRepository(repository: Repository): Observable<any> {
+    const { owner, name } = repository;
     return this.deleteRequest(
-      `${this.baseUrl}/user/starred/${owner}/${repository_name}`
+      `${this.baseUrl}/user/starred/${owner.login}/${name}`
     );
   }
 
-  subscribeRepository(owner: string, repository_name: string): Observable<any> {
+  subscribeRepository(repository: Repository): Observable<any> {
+    const { owner, name } = repository;
     return this.putRequest(
-      `${this.baseUrl}/repos/${owner}/${repository_name}/subscription`,
+      `${this.baseUrl}/repos/${owner.login}/${name}/subscription`,
       {
         ignored: false,
         subscribed: true,
@@ -52,12 +55,10 @@ export class RepositoryService extends NetworkService {
     );
   }
 
-  unsubscribeRepository(
-    owner: string,
-    repository_name: string
-  ): Observable<any> {
+  unsubscribeRepository(repository: Repository): Observable<any> {
+    const { owner, name } = repository;
     return this.deleteRequest(
-      `${this.baseUrl}/repos/${owner}/${repository_name}/subscription`
+      `${this.baseUrl}/repos/${owner.login}/${name}/subscription`
     );
   }
 }

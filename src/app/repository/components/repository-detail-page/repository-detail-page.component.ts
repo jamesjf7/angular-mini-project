@@ -22,11 +22,9 @@ export class RepositoryDetailPageComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.route.params.subscribe((params) => {
-      const { owner, repo } = params;
-      this.store.dispatch(
-        REPOSITORIES.getIssues({ owner, repository_name: repo })
-      );
-    });
+    const { owner, repo } = this.route.snapshot.params;
+    this.store.dispatch(
+      REPOSITORIES.getIssues({ owner, repository_name: repo })
+    );
   }
 }

@@ -10,7 +10,7 @@ import { reducers } from './shared/store/reducers';
 
 import { RepositoryItemComponent } from './components/repository-item/repository-item.component';
 import { RepositoryListComponent } from './components/repository-list/repository-list.component';
-import { RepositoryDetailPageComponent } from './components/repository-detail/repository-detail-page.component';
+import { RepositoryDetailPageComponent } from './components/repository-detail-page/repository-detail-page.component';
 
 @NgModule({
   imports: [
